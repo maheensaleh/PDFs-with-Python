@@ -1,0 +1,15 @@
+{
+    "info": {
+        "added": 1608606477.569469, 
+        "started": 1608606477.984089, 
+        "duration": 257, 
+        "ended": 1608606735.504874, 
+        "owner": null, 
+        "score": 10.2, 
+        "id": 17, 
+        "category": "file", 
+        "git": {
+            "head": ".git/HEAD", 
+            "fetch_head": ".git/HEAD"
+        }, 
+}
