@@ -10,7 +10,7 @@ from cStringIO import StringIO
 from reportlab.lib import colors
 
 from io import BytesIO
-from reportlab.platypus import Table, Image, SimpleDocTemplate, Paragraph, PageBreak ,ListFlowable, ListItem, Frame, PageTemplate, BaseDocTemplate
+from reportlab.platypus import Table, TableStyle,Image, SimpleDocTemplate, Paragraph, PageBreak ,ListFlowable, ListItem, Frame, PageTemplate, BaseDocTemplate
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm, inch
 from reportlab.lib.styles import getSampleStyleSheet
@@ -54,6 +54,36 @@ def add_info(data, style_sheet):
     return listFlowables 
 
 
+def get_table(data_dict):
+    ss = getSampleStyleSheet()
+    style = ss['BodyText']
+
+    chart_style = TableStyle([
+                ('ALIGN', (0, 0), (0,0), 'CENTER'),
+                ('VALIGN', (0, 0), (0,0), 'TOP'),
+                ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                
+                ])
+
+    tbl_data = []
+
+    for key in data_dict.keys():
+        tbl_data.append(
+        [Paragraph("<b>{}</b>".format(key)),Paragraph(data_dict[key])],
+
+        )
+
+    tbl = Table(tbl_data,style = chart_style)
+
+    return tbl
+
+
+# flowables.append(Table([[im, im2]],
+#                      colWidths=[2 * inch,5*inch ],
+#                      rowHeights=[1 * inch], style=chart_style))
+
+
 def footer(canvas, my_doc):
     page_info = "Cuckoo Analysis Result"
     canvas.saveState()
@@ -70,7 +100,7 @@ sample_style_sheet = getSampleStyleSheet()# if you want to see all the sample st
 
 # pdf_buffer = BytesIO()
 
-my_doc = SimpleDocTemplate("report_format2.pdf")
+my_doc = SimpleDocTemplate("test_report2.pdf")
 
 flowables = []
 # my_doc.build(flowables)
@@ -84,9 +114,18 @@ category = "Category : "+"file"
 
 filename = "File name : "+"cerber.exe"
 
-score = "Analysis Score : " +"6.2"
+score = "Analysis score for this file is <b>6.2</b> which indicates that it is a <b>very suspicious file</b>."
+
+report_time = datetime.datetime.now()
+report_time =  report_time.strftime("%d %b'%Y")
+
 start_time =  datetime.datetime(2020, 12, 22, 5, 36, 26)
+
+start_time =  start_time.strftime("%d %b'%Y , %H:%I %p")
+print(start_time)
 end_time = datetime.datetime(2020, 12, 22, 5, 43, 40)
+end_time =  end_time.strftime("%d %b'%Y , %H:%I %p")
+
 duration = 434
 headers =['Queries for the computername',
 'Checks if process is being debugged by a debugger',
@@ -116,27 +155,27 @@ title_style.leading =44
 
 
 
-# We really want to scale the image to fit in a box and keep proportions.
-im = Image("c_logo.jpeg", 1.5*inch, 0.8*inch)
-im.hAlign="RIGHT"
+#
 
 score_ss = getSampleStyleSheet()
-score_style = sample_style_sheet['Heading2']
-score_style.alignment = 2
+score_style = sample_style_sheet['BodyText']
+score_style.alignment = 1
+score_style.leading = 20
 score_style.fontSize =13
-score_style.borderColor = "#000000"
-score_style.borderPadding= (3,6,3,-312)
-score_style.borderRadius = 1
-# score_style.borderWidth = 0.01*mm
+score_style.borderColor = "#e86f6f"
+score_style.borderPadding= (3,6,3,6)
+score_style.borderRadius = 2
+score_style.borderWidth = 0.1*mm
 score_style.backColor = "#ff8f8f"
 
 heading_ss = getSampleStyleSheet()
 heading_style = heading_ss['Heading2']
 heading_style.leading =30
-heading_style.borderPadding =(5,0,0,3)
-heading_style.fontSize = 18
-# heading_style.backColor = "#79b8fc"
-# heading_style.textColor ="#FFFFFF"
+heading_style.borderPadding =(3,0,-6,6)
+heading_style.fontSize = 15
+# heading_style.under
+heading_style.backColor = "#4472c4"
+heading_style.textColor ="#FFFFFF"
 
 
 fileinfo_ss = getSampleStyleSheet()
@@ -156,32 +195,58 @@ exec_info = {
 
 sig_ss = getSampleStyleSheet()
 
-# style_head.textColor = "#000000"
- #FFFF00
 
-# flowables.append(''' <imgsrc= "pic.png" valign="middle"/>'''))
+date_ss = getSampleStyleSheet()
+date_style = date_ss['BodyText']
+# flowables.append(Paragraph(title,title_style0)) # gap
+# flowables.append(Paragraph(title,title_style0)) # gap
 
-# flowables.append(im)
-tbl = Table([
-    [Paragraph(title,title_style),im]
-])
+# flowables.append(Paragraph(title,title_style))
+# flowables.append(Paragraph("<i>Dated : {} </i>".format(report_time),date_style))
 
-# flowables.append(tbl)
-flowables.append(Paragraph(title,title_style0))
-
-flowables.append(Paragraph(title,title_style))
 #
 # flowables.append(im)
+# flowables.append(Paragraph(title,title_style0)) # gap
 
+#  We really want to scale the image to fit in a box and keep proportions.
+im = Image("c_logo.jpeg", 1.3*inch, 0.6*inch)
+im.hAlign="LEFT"
+
+head_ss = getSampleStyleSheet()
+head_style = head_ss['Title']
+head_style.font_size =30
+# head_style.alignment=0
+# head_style
+
+head_tbl_style = TableStyle([('ALIGN', (0, 0), (1,1), 'LEFT'),
+                          ('VALIGN', (0, 0), (1,1), 'MIDDLE')])
+
+head_tbl_data = [
+    [im, Paragraph("CUKCOO ANALYSIS REPORT",head_style)],
+]
+
+flowables.append(Table(
+    head_tbl_data,
+    colWidths=[1 * inch,5*inch ],
+     style = head_tbl_style))
+
+flowables.append(Paragraph(title,title_style0)) # gap
 flowables.append(Paragraph(score,    score_style))
 
-flowables.append(Paragraph("File Information : ",heading_style))
-flowables.append(add_info(file_info,fileinfo_ss))
+flowables.append(Paragraph(title,title_style0)) # gap
+flowables.append(Paragraph(title,title_style0)) # gap
 
-flowables.append(Paragraph("Execution Information : ",heading_style))
-flowables.append(add_info(exec_info,execinfo_ss))
+flowables.append(Paragraph("FILE INFORMATION: ",heading_style))
+# flowables.append(add_info(file_info,fileinfo_ss))
+flowables.append(get_table(file_info))
 
-flowables.append(Paragraph("Signatures : ",heading_style))
+flowables.append(Paragraph(title,title_style0)) # gap
+flowables.append(Paragraph("EXECUTION INFORMATION : ",heading_style))
+# flowables.append(add_info(exec_info,execinfo_ss))
+flowables.append(get_table(exec_info))
+
+flowables.append(Paragraph(title,title_style0)) # gap
+flowables.append(Paragraph("SIGNATURES : ",heading_style))
 flowables.append(add_signatures(headers,sig_ss))
 
 # def addPageNumber(canvas, my_doc):
@@ -202,12 +267,14 @@ def addPageNumber(canvas, doc):
 def add_main_header(canvas,doc):
 
     # header image
-    canvas.drawImage( "c_logo.jpeg", 160*mm,265*mm, width=1.5*inch,height=0.8*inch) 
+    canvas.drawInlineImage( "nccs.jpeg", 165*mm,268*mm, width=0.7*inch,height=0.7*inch) 
+
 
     # header line
-    canvas.setStrokeColorRGB(0.203,0.682, 0.921)
+    r,g,b = 68.0/255.0,114.0/255.0,196.0/255.0
+    canvas.setStrokeColorRGB(r,g,b)
     canvas.setLineWidth(1*mm)     
-    canvas.line(20*mm,277*mm,154*mm,277*mm)
+    canvas.line(20*mm,277*mm,160*mm,277*mm)
 
     # first page number
     page_num = canvas.getPageNumber()
