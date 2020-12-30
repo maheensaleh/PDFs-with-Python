@@ -1,22 +1,13 @@
-
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import mm, inch, cm
-from reportlab.platypus import Paragraph
-from functools import partial
-from cStringIO import StringIO
-from reportlab.lib import colors
-
-from io import BytesIO
-from reportlab.platypus import Table, TableStyle,Image, SimpleDocTemplate, Paragraph, PageBreak ,ListFlowable, ListItem, Frame, PageTemplate, BaseDocTemplate
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import mm, inch
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.styles import ParagraphStyle as PS
+#=============== IMPORTS =================#
 
 import datetime
+
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle,Image, SimpleDocTemplate, Paragraph, PageBreak ,ListFlowable, ListItem, Frame, PageTemplate, BaseDocTemplate
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.lib.units import mm, inch, cm
+
 #======================= functions ==============================#
 
 
@@ -36,22 +27,20 @@ def add_signatures(sig_list, style_sheet):
     listFlowables = ListFlowable(list_items,bulletType='bullet',leftIndent=10)
     return listFlowables
 
-def add_info(data, style_sheet):
-    style = style_sheet['Normal']
-    style.leading = 20
-    style.fontSize = 12
+# def add_info(data, style_sheet):
+#     style = style_sheet['Normal']
+#     style.leading = 20
+#     style.fontSize = 12
 
-    # style.borderWidth = 1*mm
-    # style.borderColor = "#000000"
 
-    list_items=[]
+#     list_items=[]
 
-    for key in data.keys():
-        list_items.append(ListItem(Paragraph("<b>{}</b> : {}".format(key,data[key]),style)))
+#     for key in data.keys():
+#         list_items.append(ListItem(Paragraph("<b>{}</b> : {}".format(key,data[key]),style)))
 
     
-    listFlowables = ListFlowable(list_items,bulletType='bullet',leftIndent=10)
-    return listFlowables 
+#     listFlowables = ListFlowable(list_items,bulletType='bullet',leftIndent=10)
+#     return listFlowables 
 
 
 def get_table(data_dict):
@@ -167,6 +156,9 @@ score_style.borderPadding= (3,6,3,6)
 score_style.borderRadius = 2
 score_style.borderWidth = 0.1*mm
 score_style.backColor = "#ff8f8f"
+
+score_style.borderColor = "#13ba66"
+score_style.backColor = "#2aeb8a"
 
 heading_ss = getSampleStyleSheet()
 heading_style = heading_ss['Heading2']
